@@ -1,4 +1,5 @@
-FROM ubuntu:23.04
+#FROM ubuntu:23.04
+FROM node:18-bookworm-slim
 SHELL ["/bin/bash", "-c"]
 
 ARG TZ="UTC"
@@ -75,6 +76,10 @@ RUN if [ $(grep -c "\- emu" ../../conf/local.yml)  ]; then \
     ./download_payloads.sh;                         \
 fi
 
+WORKDIR /usr/src/app/plugins/magma
+RUN echo 'VITE_CALDERA_URL=https://' > .env
+RUN npm install
+RUN npm run build
 WORKDIR /usr/src/app
 
 # Default HTTP port for web interface and agent beacons over HTTP
