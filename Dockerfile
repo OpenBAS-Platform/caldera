@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+#FROM ubuntu:24.04
+FROM node:18-bookworm-slim
 SHELL ["/bin/bash", "-c"]
 
 ARG TZ="UTC"
@@ -75,23 +76,11 @@ RUN if [ $(grep -c "\- emu" ../../conf/local.yml)  ]; then \
     ./download_payloads.sh;                         \
 fi
 
+WORKDIR /usr/src/app/plugins/magma
+RUN echo 'VITE_CALDERA_URL=https://' > .env
+RUN npm install
+RUN npm run build
 WORKDIR /usr/src/app
-
-# Install Node.js, npm, and other build VueJS front-end
-RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    # Directly use npm to install dependencies and build the application
-    (cd plugins/magma && npm install) && \
-    (cd plugins/magma && npm run build) && \
-    # Remove Node.js, npm, and other unnecessary packages
-    apt-get remove -y nodejs npm && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-WORKDIR /usr/src/app
-
-STOPSIGNAL SIGINT
 
 # Default HTTP port for web interface and agent beacons over HTTP
 EXPOSE 8888
