@@ -77,7 +77,7 @@ RUN if [ $(grep -c "\- emu" ../../conf/local.yml)  ]; then \
 fi
 
 WORKDIR /usr/src/app/plugins/magma
-RUN echo 'VITE_CALDERA_URL=https://' > .env
+#RUN echo 'VITE_CALDERA_URL=/' > .env
 RUN npm install
 RUN npm run build
 WORKDIR /usr/src/app
